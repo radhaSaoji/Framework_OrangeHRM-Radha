@@ -5,10 +5,14 @@ import java.util.Collections;
 import java.util.List;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.technocredits.ornghrm.base.PreRequisiteSteps;
 import com.technocredits.ornghrm.base.exceptionsClass.ElementNotEnabledException;
 import com.technocredits.ornghrm.pages.DashboardPage;
+import com.technocredits.ornghrm.pages.LoginPage;
 import com.technocredits.ornghrm.utility.ExcelOperationsLoginData;
 
 public class DashboardTest extends BaseTest{
@@ -16,15 +20,12 @@ public class DashboardTest extends BaseTest{
 	@Test
 	public void UserprofileValidation() throws ElementNotEnabledException {
 		
-		DashboardPage homepage = new DashboardPage();
+		DashboardPage dashboard = goto_dashboard();
 		System.out.println("VERIFY- Dashboard is displayed");
-		Assert.assertTrue(homepage.isDashboardDisplayed(),"Dashboard is not displayed");
-		
-		System.out.println("VERIFY- Dashboard is selected as default menu after login");
-		Assert.assertTrue( homepage.isDashboardSelectedAsDefaultMenu(),"DashBoard is not the default menu");
+		Assert.assertTrue(dashboard.isDashboardDisplayed(),"Dashboard is not displayed");
 		
 		System.out.println("VERIFY- Widgets are displayed on Dashboard page");
-		List<String> actualListOfWidgets = homepage.getWidgetsTitle();
+		List<String> actualListOfWidgets = dashboard.getWidgetsTitle();
 		Assert.assertEquals(actualListOfWidgets.size(), 11,"Some of the menu are missing");
 		try {
 			List<String> expectedListOfWidgets= ExcelOperationsLoginData.getAllRowsAtColumn("WidgetTitles.xlsx", "Widget", 0, true);
@@ -35,10 +36,6 @@ public class DashboardTest extends BaseTest{
 			System.out.println("ERROR- File not loaded");
 			Assert.fail();
 		}
-		DashboardPage dashboard = new DashboardPage();
-		System.out.println("VERIFY- User profile is displayed");
-		Assert.assertTrue(dashboard.isUserProfileDisplayed(), "User profile is not present");
-		
 		System.out.println("Step- Click on User profile arrow");
 		dashboard.clickOnUserProfile();
 		
@@ -55,6 +52,9 @@ public class DashboardTest extends BaseTest{
 		Assert.assertEquals(dashboard.areAllElementsCollapsible().size(), 14, "Some of the sections are not clickable");;
 	}
 	
-	
+	@AfterMethod
+	public void closeBrowser() {
+		PreRequisiteSteps.tearDown();
+	}
 }
 	
